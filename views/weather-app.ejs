@@ -1,2 +1,43 @@
-<h1><%= hourlyDataList %></h1>
-<h1><%= dailyData %></h1>
+<%- include('header'); -%>
+<% let data = passedData; %>
+<% let webHourlyData = hourlyData; %>
+<main>
+    <section class="top">
+        <section class="left">
+            <!-- location search bar and color change button -->
+            <nav>
+                <!--------------- location search bar ------------------->
+                <form action="/location" method="post">
+                    <label for="city"><i class="fa-solid fa-location-dot"></i> <span>Search for cities</span></label>
+                    <input type="text" name="city" id="location">
+                </form>
+                
+                <div class="color-switch">
+                    <div class="circle"></div>
+                </div>
+            </nav>
+            
+            
+            <!--------------- weather details-short ------------------->
+            <header>
+                <article>
+                    <h2><%= location %></h2>
+                    <p><%= data.humidity %></p>
+                    <h1><%= data.temp %><sup>o</sup></h1>
+                </article>
+                
+                <img src="https://openweathermap.org/img/wn/<%= data.icon %>@2x.png" alt="Weather image">
+            </header>
+
+            
+        </section>
+
+
+        <!--------------- weather days details ------------------->
+        <!-- <section class="right">
+
+        </section> -->
+    </section>
+</main>
+
+<%- include('footer'); -%>

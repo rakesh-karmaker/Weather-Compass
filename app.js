@@ -25,8 +25,8 @@ let url = endPoint + "q=" + city + "&APPID=" + apiKey + "&units=" + unit;
 
 
 
-
 //-------- create the necessary variables to store the data from the API
+let cityName = "Dhaka";
 let daysName = daysModule.days();
 let hourlyDataList = [];
 let dailyData = [];
@@ -81,8 +81,8 @@ function distributeData(data) {
             dailyData.push({
                 day : daysName[dayIndex],
                 date : dateIndex,
-                max : Number(weatherDataSet.main.temp_max),
-                min : Number(weatherDataSet.main.temp_min)
+                max : Math.floor(Number(weatherDataSet.main.temp_max)),
+                min : Math.floor(Number(weatherDataSet.main.temp_min))
             })
             dayIndex++;
         }
@@ -93,7 +93,7 @@ function distributeData(data) {
             icon : weatherDataSet.weather[0].icon,
             hour : tConvert(weatherDataSet.dt_txt.slice(11, 16)),
 
-            temp : Number(weatherDataSet.main.temp),
+            temp : Math.floor(Number(weatherDataSet.main.temp)),
             feelsLike : Number(weatherDataSet.main.feels_like),
             humidity : weatherDataSet.main.humidity + "%",
             clouds : weatherDataSet.clouds.all + "%",
@@ -132,12 +132,11 @@ app.get("/", function(req,res) {
 
                 websitePassingData = hourlyDataList[dailyDataIndex][hourlyDataListIndex];
                 websiteHourlyData = hourlyDataList[dailyDataIndex];
-                // res.render("weather-app", {
-                //     hourlyDataList : hourlyDataList,
-                //     dailyData : dailyData
-                // })
-                console.log(websiteHourlyData);
-                res.send("done")
+                res.render("weather-app", {
+                    passedData : websitePassingData,
+                    hourlyData : websiteHourlyData,
+                    location : cityName,
+                })
             })
         }
     })
@@ -147,6 +146,7 @@ app.get("/", function(req,res) {
 //-------- create the post request for subscribing to the newsletter
 app.post("/newsletter", function(req,res) {
     res.send("Thank you for subscribing to our newsletter");
+    res.redirect("/");
 })
 
 
@@ -154,6 +154,12 @@ app.post("/newsletter", function(req,res) {
 app.post("/location", function(req,res) {
     let location = req.body.city;
     city = location;
+    for (let i = 0; i < city.length; i++) {
+        if (city[i] === " " || city[i] === ",") {
+            cityName = city.slice(0, i);
+            break;
+        }
+    }
     res.redirect("/")
 })
 
