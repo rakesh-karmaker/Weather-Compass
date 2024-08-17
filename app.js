@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const https = require("https");
+require("dotenv").config();
 
 //---- import modules which are created locally
 const daysModule = require(__dirname + '/date.js');
@@ -16,7 +17,7 @@ app.set("view engine", "ejs");
 
 
 //-------- API details
-const apiKey = "ebe9584751e3188b8783b568299374ff";
+const apiKey = process.env.API_KEY;
 const unit = "metric";
 const endPoint = "https://api.openweathermap.org/data/2.5/forecast?";
 // const endPoint = "https://api.openweathermap.org/data/2.5/weather?";
@@ -27,10 +28,11 @@ let url = endPoint + "q=" + city + "&APPID=" + apiKey + "&units=" + unit;
 
 //-------- create the necessary variables to store the data from the API
 let cityName = "Dhaka";
+let userHourChoose = false;
 let daysName = daysModule.days();
 let hourlyDataList = [];
 let dailyData = [];
-let hourlyDataListIndex = 0;
+let hourlyDataListIndex = 1;
 let dailyDataIndex = 0;
 let websitePassingData;
 let websiteHourlyData;
@@ -43,7 +45,7 @@ function tConvert (time) {
 
     if (time.length > 1) { // If time format correct
         time = time.slice (1);  // Remove full string match value
-        time[5] = +time[0] < 12 ? 'AM' : 'PM'; // Set AM/PM
+        time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
         time[0] = +time[0] % 12 || 12; // Adjust hours
     }
     return time.join (''); // return adjusted time or original string
@@ -62,8 +64,10 @@ function distributeData(data) {
     dailyData.push({
         day : daysName[0],
         date : dateIndex,
-        max : Number(dataList[0].main.temp_max),
-        min : Number(dataList[0].main.temp_min)
+        des : dataList[0].weather[0].main,
+        icon : dataList[0].weather[0].icon,
+        max : Math.round(Number(dataList[0].main.temp_max)),
+        min : Math.round(Number(dataList[0].main.temp_min))
     })
 
 
@@ -81,8 +85,10 @@ function distributeData(data) {
             dailyData.push({
                 day : daysName[dayIndex],
                 date : dateIndex,
-                max : Math.floor(Number(weatherDataSet.main.temp_max)),
-                min : Math.floor(Number(weatherDataSet.main.temp_min))
+                des : weatherDataSet.weather[0].main,
+                icon : weatherDataSet.weather[0].icon,
+                max : Math.round(Number(weatherDataSet.main.temp_max)),
+                min : Math.round(Number(weatherDataSet.main.temp_min))
             })
             dayIndex++;
         }
@@ -130,13 +136,21 @@ app.get("/", function(req,res) {
             response.on("end", function() {
                 distributeData(JSON.parse(dataString));
 
+
+                if (!userHourChoose) {
+                    hourlyDataListIndex = (hourlyDataList.length === 1) ? 0 : 1;
+                }
                 websitePassingData = hourlyDataList[dailyDataIndex][hourlyDataListIndex];
                 websiteHourlyData = hourlyDataList[dailyDataIndex];
                 res.render("weather-app", {
                     passedData : websitePassingData,
                     hourlyData : websiteHourlyData,
                     location : cityName,
+                    activeHour : Number(hourlyDataListIndex),
+                    dailyDataList : dailyData,
+                    activeDay : dailyDataIndex,
                 })
+                console.log(dailyData);
             })
         }
     })
@@ -168,6 +182,7 @@ app.post("/location", function(req,res) {
 app.post("/hour", function(req, res) {
     let index = req.body.hour;
     hourlyDataListIndex = index;
+    userHourChoose = true;
     res.redirect("/");
 })
 
@@ -176,6 +191,7 @@ app.post("/hour", function(req, res) {
 app.post("/day", function(req, res) {
     let index = req.body.day;
     dailyDataIndex = index;
+    userDayChoose = false;
     res.redirect("/");
 })
 

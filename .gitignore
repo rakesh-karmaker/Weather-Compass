@@ -1,3 +1,4 @@
 # Here is the name of the files and folders which will not be commited 
 
 node_modules
+.env
