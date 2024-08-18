@@ -30,6 +30,7 @@ let url = endPoint + "q=" + city + "&APPID=" + apiKey + "&units=" + unit;
 let cityName = "Dhaka";
 let userHourChoose = false;
 let daysName = daysModule.days();
+let currentDate = daysModule.currentDate();
 let hourlyDataList = [];
 let dailyData = [];
 let hourlyDataListIndex = 1;
@@ -55,42 +56,43 @@ function tConvert (time) {
 function distributeData(data) {
     let dataList = data.list;
     let dateIndex = (dataList[0].dt_txt).slice(8, 10);
+    let startingIndex = (dateIndex != currentDate) ? 1 : 0;
+
     // console.log(dateIndex);
     let hourlyData = [];
-    let dayIndex = 1;
+    let dayIndex = 0;
+    let currentMax = Math.round(Number(dataList[startingIndex].main.temp_max));
+    let currentMin = Math.round(Number(dataList[startingIndex].main.temp_min));
+    let dailyDes = dataList[startingIndex].weather[0].main;
+    let dailyIcon = dataList[startingIndex].weather[0].icon;
 
 
-    // add the first date's data to the dailyData
-    dailyData.push({
-        day : daysName[0],
-        date : dateIndex,
-        des : dataList[0].weather[0].main,
-        icon : dataList[0].weather[0].icon,
-        max : Math.round(Number(dataList[0].main.temp_max)),
-        min : Math.round(Number(dataList[0].main.temp_min))
-    })
-
-
-    for (let i = 0; i < dataList.length; i++) {
+    for (let i = startingIndex; i < dataList.length; i++) {
         let weatherDataSet = dataList[i];
 
         // if is changes to a new date then add the previous date's data to the hourlyDataList
         if (dateIndex != String(weatherDataSet.dt_txt).slice(8, 10) && dayIndex < 5) {
-            dateIndex = String(weatherDataSet.dt_txt).slice(8, 10);
-
+            
             hourlyDataList.push(hourlyData);
             hourlyData = [];
-
+            
             // add the new date's data to the dailyData for 5 days
             dailyData.push({
                 day : daysName[dayIndex],
                 date : dateIndex,
-                des : weatherDataSet.weather[0].main,
-                icon : weatherDataSet.weather[0].icon,
-                max : Math.round(Number(weatherDataSet.main.temp_max)),
-                min : Math.round(Number(weatherDataSet.main.temp_min))
+                des : dailyDes,
+                icon : dailyIcon,
+                max : currentMax,
+                min : currentMin
             })
             dayIndex++;
+            
+            currentMax = Math.round(Number(weatherDataSet.main.temp_max));
+            currentMin = Math.round(Number(weatherDataSet.main.temp_min));
+            dailyDes = weatherDataSet.weather[0].main;
+            dailyIcon = weatherDataSet.weather[0].icon;
+
+            dateIndex = String(weatherDataSet.dt_txt).slice(8, 10);
         }
 
 
@@ -106,6 +108,23 @@ function distributeData(data) {
             wind_speed : Math.round(Number((weatherDataSet.wind.speed * 18) / 5)) + " km/h",
             visibility : Number((weatherDataSet.visibility) / 1000) + " km",
             pressure : weatherDataSet.main.pressure + " hPa",  
+        })
+
+
+        // checks if the currentMax and currentMin is changed than the update the currentMax and currentMin
+        currentMax = (currentMax < Math.round(Number(weatherDataSet.main.temp_max))) ? Math.round(Number(weatherDataSet.main.temp_max)) : currentMax;
+        currentMin = (currentMin > Math.round(Number(weatherDataSet.main.temp_min))) ? Math.round(Number(weatherDataSet.main.temp_min)) : currentMin;
+    }
+
+    // add the last date's data to the dailyData
+    if (dayIndex < 5) {
+        dailyData.push({
+            day : daysName[dayIndex],
+            date : dateIndex,
+            des : dailyDes,
+            icon : dailyIcon,
+            max : currentMax,
+            min : currentMin
         })
     }
 }
@@ -183,6 +202,8 @@ app.post("/hour", function(req, res) {
     let index = req.body.hour;
     hourlyDataListIndex = index;
     userHourChoose = true;
+    dailyData = [];
+    hourlyDataList = [];
     res.redirect("/");
 })
 
@@ -192,6 +213,8 @@ app.post("/day", function(req, res) {
     let index = req.body.day;
     dailyDataIndex = index;
     userDayChoose = false;
+    dailyData = []; 
+    hourlyDataList = [];
     res.redirect("/");
 })
 

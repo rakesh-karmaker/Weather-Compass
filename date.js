@@ -16,3 +16,8 @@ exports.days = function() {
 
     return days;
 }
+
+exports.currentDate = function () {
+    const dateObject = new Date();
+    return dateObject.getDate();
+}
