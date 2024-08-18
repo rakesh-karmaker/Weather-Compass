@@ -20,23 +20,27 @@ app.set("view engine", "ejs");
 const apiKey = process.env.API_KEY;
 const unit = "metric";
 const endPoint = "https://api.openweathermap.org/data/2.5/forecast?";
-// const endPoint = "https://api.openweathermap.org/data/2.5/weather?";
+const weatherEndPoint = "https://api.openweathermap.org/data/2.5/weather?";
 let city = "Dhaka,Bangladesh";
 let url = endPoint + "q=" + city + "&APPID=" + apiKey + "&units=" + unit;
+let weatherUrl = weatherEndPoint + "q=" + city + "&APPID=" + apiKey + "&units=" + unit;
+
 
 
 
 //-------- create the necessary variables to store the data from the API
 let cityName = "Dhaka";
-let userHourChoose = false;
-let daysName = daysModule.days();
-let currentDate = daysModule.currentDate();
+let userInteracted = false;
+let requestData = true;
 let hourlyDataList = [];
 let dailyData = [];
 let hourlyDataListIndex = 1;
 let dailyDataIndex = 0;
 let websitePassingData;
 let websiteHourlyData;
+let weatherData = {};
+let renderedData;
+
 
 
 // -------- create a function to convert the time format
@@ -52,11 +56,22 @@ function tConvert (time) {
     return time.join (''); // return adjusted time or original string
 }
 
+
+//------- setting a timeout for protecting from API overload
+function timeOut() {
+    requestData = false;
+    setTimeout(function() {
+        requestData = true;
+    }, 10000);
+}
+
+
 //-------- create a function to break down the data object to store only the data we need
 function distributeData(data) {
     let dataList = data.list;
+    let daysName = daysModule.days();
     let dateIndex = (dataList[0].dt_txt).slice(8, 10);
-    let startingIndex = (dateIndex != currentDate) ? 1 : 0;
+    let startingIndex = (dateIndex != (daysModule.currentDate())) ? 1 : 0;
 
     // console.log(dateIndex);
     let hourlyData = [];
@@ -130,49 +145,101 @@ function distributeData(data) {
 }
 
 
+//-------- create a function to set the overall current weather data
+function distributeCurrentData(data) {
+    weatherData = {
+        icon : data.weather[0].icon,
+        temp : Math.round(Number(data.main.temp)),
+        humidity : data.main.humidity + "%",
+        clouds : data.clouds.all + "%",
+        wind_speed : Math.round(Number((data.wind.speed * 18) / 5)) + " km/h",
+        visibility : Number((data.visibility) / 1000) + " km",
+        pressure : data.main.pressure + " hPa",
+        feelsLike : data.main.feels_like
+    }
+}
+
+
 //-------- creating the get request for the home page
 app.get("/", function(req,res) {
     //-retrieve the weather data as a response form the open weather map API
-    https.get(url, function(response) {
-        if (response.statusCode === 404) {
-            //!------ Handle the error if the city is not found
-            res.send("Error, please enter a valid city");
-        }
-        else if (response.statusCode === 429) {
-            //!------ Handle the error if the API limit is reached
-            res.send("Error, please try again later");
-        }
-        
-        else {
-            //-convert the data and render the webpage
-            let dataString = "";
-            //-collecting all the data packets from the API
-            response.on("data", function(chunk) {
-                dataString += chunk;
-            })
 
-            //-once all the data is collected
-            response.on("end", function() {
-                distributeData(JSON.parse(dataString));
-
-
-                if (!userHourChoose) {
-                    hourlyDataListIndex = (hourlyDataList.length === 1) ? 0 : 1;
-                }
-                websitePassingData = hourlyDataList[dailyDataIndex][hourlyDataListIndex];
-                websiteHourlyData = hourlyDataList[dailyDataIndex];
-                res.render("weather-app", {
-                    passedData : websitePassingData,
-                    hourlyData : websiteHourlyData,
-                    location : cityName,
-                    activeHour : Number(hourlyDataListIndex),
-                    dailyDataList : dailyData,
-                    activeDay : dailyDataIndex,
+    if (requestData) {
+        https.get(url, function(response) {
+            if (response.statusCode === 404) {
+                //!------ Handle the error if the city is not found
+                res.send("Error, please enter a valid city");
+            }
+            else if (response.statusCode === 429) {
+                //!------ Handle the error if the API limit is reached
+                res.send("Error, please try again later");
+            }
+            
+            else {
+                dailyData = [];
+                hourlyDataList = [];
+                //-convert the data and render the webpage
+                let dataString = "";
+                //-collecting all the data packets from the API
+                response.on("data", function(chunk) {
+                    dataString += chunk;
                 })
-                console.log(dailyData);
-            })
+    
+                //-once all the data is collected
+                response.on("end", function() {
+                    // the tha overall weather data of the current day
+                    https.get(weatherUrl, function(weatherResponse) {
+                        if (weatherResponse.statusCode === 404) {
+                            //!------ Handle the error if the city is not found
+                            res.send("Error, please enter a valid city");
+                        }
+                        else if (weatherResponse.statusCode === 429) {
+                            //!------ Handle the error if the API limit is reached
+                            res.send("Error, please try again later");
+                        }
+                        else {
+                            weatherResponse.on("data", function(data) {
+                                distributeCurrentData(JSON.parse(data));
+                                distributeData(JSON.parse(dataString));
+                
+                                if (!userInteracted) {
+                                    hourlyDataListIndex = (hourlyDataList.length === 1) ? 0 : 1;
+                                }
+                                websitePassingData = hourlyDataList[dailyDataIndex][hourlyDataListIndex];
+                                websiteHourlyData = hourlyDataList[dailyDataIndex];
+                                renderedData = {
+                                    passedData : (userInteracted) ? websitePassingData : weatherData,
+                                    hourlyData : websiteHourlyData,
+                                    location : cityName,
+                                    activeHour : Number(hourlyDataListIndex),
+                                    dailyDataList : dailyData,
+                                    activeDay : dailyDataIndex,
+                                }
+                                res.render("weather-app", renderedData);
+                                console.log("data has been taken");
+                                timeOut();
+                            })
+                        }
+                    })
+                })
+            }
+        })
+    }
+    else {
+        console.log("data has not been taken yet");
+        console.log()
+        websitePassingData = hourlyDataList[dailyDataIndex][hourlyDataListIndex];
+        websiteHourlyData = hourlyDataList[dailyDataIndex];
+        renderedData = {
+            passedData : (userInteracted) ? websitePassingData : weatherData,
+            hourlyData : websiteHourlyData,
+            location : cityName,
+            activeHour : Number(hourlyDataListIndex),
+            dailyDataList : dailyData,
+            activeDay : dailyDataIndex,
         }
-    })
+        res.render("weather-app", renderedData);
+    }
 })
 
 
@@ -187,6 +254,13 @@ app.post("/newsletter", function(req,res) {
 app.post("/location", function(req,res) {
     let location = req.body.city;
     city = location;
+    url = endPoint + "q=" + city + "&APPID=" + apiKey + "&units=" + unit;
+    weatherUrl = weatherEndPoint + "q=" + city + "&APPID=" + apiKey + "&units=" + unit;
+    userInteracted = false;
+    requestData = true;
+    hourlyDataListIndex = 0;
+    dailyDataIndex = 0;
+
     for (let i = 0; i < city.length; i++) {
         if (city[i] === " " || city[i] === ",") {
             cityName = city.slice(0, i);
@@ -201,9 +275,7 @@ app.post("/location", function(req,res) {
 app.post("/hour", function(req, res) {
     let index = req.body.hour;
     hourlyDataListIndex = index;
-    userHourChoose = true;
-    dailyData = [];
-    hourlyDataList = [];
+    userInteracted = true;
     res.redirect("/");
 })
 
@@ -212,9 +284,8 @@ app.post("/hour", function(req, res) {
 app.post("/day", function(req, res) {
     let index = req.body.day;
     dailyDataIndex = index;
-    userDayChoose = false;
-    dailyData = []; 
-    hourlyDataList = [];
+    hourlyDataListIndex = 0;
+    userInteracted = true;
     res.redirect("/");
 })
 
