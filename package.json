@@ -4,6 +4,7 @@
   "description": "A weather web aplication for giving the user accurate direction of weather",
   "main": "app.js",
   "scripts": {
+    "start" : "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Rakesh Karmaker",
