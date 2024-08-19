@@ -29,7 +29,6 @@
                     <h2><%= location %></h2>
                     <p><%= data.humidity %></p>
                     <h1><%= data.temp %><sup>o</sup></h1>
-                    <p><%= data.hour %></p>
                 </article>
                 
                 <img src="https://openweathermap.org/img/wn/<%= data.icon %>@2x.png" alt="Weather image">
@@ -84,6 +83,72 @@
                     </button>
                 </form>
             <% } %>
+        </section>
+    </section>
+
+
+    <section class="bottom">
+        <section class="details">
+            <h2>WEATHER CONDITIONS</h2>
+            
+            <article>
+                <div>
+                    <div>
+                        <p class="heading"><i class="fa-solid fa-temperature-three-quarters"></i> <span>Feels Like<span></p>
+                        <p class="value"><%= data.feelsLike %><sup>o</sup></p>
+                    </div>
+                    <div>
+                        <p class="heading"><i class="fa-solid fa-droplet"></i> <span>Humidity Level</span></p>
+                        <p class="value"><%= data.humidity %></p>
+                    </div>
+                </div>
+
+                <div>
+                    <div>
+                        <p class="heading"><i class="fa-solid fa-cloud"></i> <span>Clouds</span></p>
+                        <p class="value"><%= data.clouds %></p>
+                    </div>
+                    <div>
+                        <p class="heading"><i class="fa-solid fa-eye"></i> <span>Visibility</span></p>
+                        <p class="value"><%= data.visibility %></p>
+                    </div>
+                </div>
+
+                <div>
+                    <div>
+                        <p class="heading"><i class="fa-solid fa-wind"></i> <span>Wind Speed</span></p>
+                        <p class="value"><%= data.wind_speed %></p>
+                    </div>
+                    <div>
+                        <p class="heading"><i class="fa-solid fa-gauge-high"></i> <span>Pressure</span></p>
+                        <p class="value"><%= data.pressure %></p>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+
+        <section class="newsletter">
+            <section class="upper-part">
+                <article>
+                    <h2>Subscribe to our <span>Newsletter</span></h2>
+                    <p>
+                        Weather Compass is our official newsletter. SUBSCRIBE NOW for get the latest news on your weather right inside your email as soon as possible.
+                    </p>
+                    <form action="/newsletter" method="post">
+                        <input type="email" name="email" placeholder="Your email">
+                        <button type="submit">Subscribe</button>
+                    </form>
+                </article>
+                <div class="socials">
+                    <a href="https://www.facebook.com/rakesh.karmaker.980" class="facebook" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="https://github.com/Rakesh-6610" class="github" target="_blank"><i class="fa-brands fa-github"></i></a>
+                    <a href="https://www.instagram.com/rakesh__karmaker/" class="insta" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.linkedin.com/in/rakesh-karmaker-a15849322/" class="in" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+                </div>
+            </section>
+
+            <p>© 2024 Weather Compass || All Rights Reserved</p>
         </section>
     </section>
 </main>

@@ -155,7 +155,6 @@ app.get("/", function (req, res) {
         req.session.weatherUrl = weatherUrl;
     }
 
-    // console.log(!req.session.userInteracted + " happened");
 
     if (!req.session.userInteracted) {
         req.session.weatherData = {};
@@ -226,7 +225,7 @@ app.get("/", function (req, res) {
 
 //-------- handle POST requests
 app.post("/newsletter", function (req, res) {
-    res.send("Thank you for subscribing to our newsletter");
+    console.log("Thank you for subscribing to our newsletter");
     res.redirect("/");
 });
 
