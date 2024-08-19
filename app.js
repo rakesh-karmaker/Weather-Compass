@@ -104,6 +104,8 @@ function distributeData(data, sessionData) {
     }
 
     if (dayIndex < 5) {
+        sessionData.hourlyDataList.push(hourlyData);
+        hourlyData = [];
         sessionData.dailyData.push({
             day: daysName[dayIndex],
             date: dateIndex,
@@ -218,7 +220,6 @@ app.get("/", function (req, res) {
             dailyDataList: req.session.dailyData,
             activeDay: req.session.dailyDataIndex,
         };
-        console.log("data has not been taken");
 
         res.render("weather-app", renderedData);
     }
@@ -226,9 +227,37 @@ app.get("/", function (req, res) {
 
 //-------- handle POST requests
 app.post("/newsletter", function (req, res) {
-    console.log("Thank you for subscribing to our newsletter");
+    const url = "https://us9.api.mailchimp.com/3.0/lists/3126c4f861";
+    const options = {
+        method: "POST",
+        auth: "Rakesh:20caf57b8eff186478e57df656f0e46c-us9"
+    }
+    req.session.email = req.body.email;
+    req.session.data = {
+        members: [
+            {
+                email_address: req.session.email,
+                status: "subscribed",
+            }
+        ]
+    }
+    req.session.jsonData = JSON.stringify(req.session.data);
+
+    req.session.request = https.request(url, options, function(response) {
+        if (response.statusCode === 200) {
+            console.log("Successfully subscribed to the mailchimp list");
+        } else {
+            console.log("Failed to subscribe to the mailchimp list");
+        }
+    })
+
+    req.session.request.write(req.session.jsonData);
+    req.session.request.end();
+
     res.redirect("/");
 });
+
+
 
 app.post("/", function (req, res) {
     req.session.userInteracted = false;
@@ -238,11 +267,16 @@ app.post("/", function (req, res) {
 app.post("/location", function (req, res) {
     let location = req.body.city;
     req.session.city = location;
-    for (let i = 0; i < location.length; i++) {
-        if (location[i] === " " || location[i] === ",") {
-            req.session.cityName = location.slice(0, i);
-            break;
+    if (location.includes(",") || location.includes(" ")) {
+        for (let i = 0; i < location.length; i++) {
+            if (location[i] === " " || location[i] === ",") {
+                req.session.cityName = location.slice(0, i);
+                break;
+            }
         }
+    }
+    else {
+        req.session.cityName = location;
     }
     req.session.url = endPoint + "q=" + req.session.city + "&APPID=" + apiKey + "&units=" + unit;
     req.session.weatherUrl = weatherEndPoint + "q=" + req.session.city + "&APPID=" + apiKey + "&units=" + unit;

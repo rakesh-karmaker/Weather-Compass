@@ -17,9 +17,6 @@
                     <button type="submit"><i class="fa-solid fa-arrows-rotate"></i> <span>Refresh</span></button>
                 </form>
                 
-                <div class="color-switch">
-                    <div class="circle"></div>
-                </div>
             </nav>
             
             
@@ -27,7 +24,7 @@
             <header>
                 <article>
                     <h2><%= location %></h2>
-                    <p><%= data.humidity %></p>
+                    <p>Humidity level: <%= data.humidity %></p>
                     <h1><%= data.temp %><sup>o</sup></h1>
                 </article>
                 
@@ -38,20 +35,20 @@
             <section class="hourly-weather">
                 <h2>TODAY'S FORECAST</h2>
                 <section>
-                    <% for (let i = 0; i < webHourlyData.length; i++) { %>
-                        <% let currentHour = webHourlyData[i] %>
-                        <form action="/hour" method="post" class="hourly-form">
-                            <% if (i === activeHour) { %>
-                            <button type="submit" name="hour" value="<%=i%>" class="hour active-hour">
-                            <% } else { %>
-                            <button type="submit" name="hour" value="<%=i%>" class="hour">
-                            <% } %>
-                                <p><%= currentHour.hour %></p>
-                                <img src="assets/weather-icons/<%=currentHour.icon%>.png" alt="hourly-weather     <%=currentHour.icon%>">
-                                <p><%= currentHour.temp %><sup>o</sup></p>
-                            </button>
-                        </form>
-                    <% } %>
+                    <form action="/hour" method="post" class="hourly-form">
+                        <% for (let i = 0; i < webHourlyData.length; i++) { %>
+                            <% let currentHour = webHourlyData[i] %>
+                                <% if (i === activeHour) { %>
+                                <button type="submit" name="hour" value="<%=i%>" class="hour active-hour">
+                                <% } else { %>
+                                <button type="submit" name="hour" value="<%=i%>" class="hour">
+                                <% } %>
+                                    <p><%= currentHour.hour %></p>
+                                    <img src="assets/weather-icons/<%=currentHour.icon%>.png" alt="hourly-weather     <%=currentHour.icon%>">
+                                    <p><%= currentHour.temp %><sup>o</sup></p>
+                                </button>
+                        <% } %>
+                    </form>
                 </section>
             </section>
         </section>
@@ -61,28 +58,28 @@
         <section class="right">
             <h2>5-DAY FORECAST</h2>
 
-            <% for (let i = 0; i < dailyData.length; i++) { %>
-                <% let currentDay = dailyData[i] %>
-                <form action="/day" method="post" class="day-form">
-                    <% if (i === activeDay) { %>
-                    <button type="submit" name="day" value="<%=i%>" class="day active-day">
-                    <% } else { %>
-                    <button type="submit" name="day" value="<%=i%>" class="day">
-                    <% } %>
-                        <p><%= currentDay.day %></p>
-                        
-                        <div>
-                            <img src="assets/weather-icons/<%= currentDay.icon %>.png" alt="day-weather-icon">
-                            <p><%= currentDay.des %></p>
-                        </div>
+            <form action="/day" method="post" class="day-form">
+                <% for (let i = 0; i < dailyData.length; i++) { %>
+                    <% let currentDay = dailyData[i] %>
+                        <% if (i == activeDay) { %>
+                        <button type="submit" name="day" value="<%=i%>" class="day active-day">
+                        <% } else { %>
+                        <button type="submit" name="day" value="<%=i%>" class="day">
+                        <% } %>
+                            <p><%= currentDay.day %></p>
+                            
+                            <div>
+                                <img src="assets/weather-icons/<%= currentDay.icon %>.png" alt="day-weather-icon">
+                                <p><%= currentDay.des %></p>
+                            </div>
 
-                        <p>
-                            <span><%= currentDay.max %><sup>o</sup></span> / 
-                            <span><%= currentDay.min %><sup>o</sup></span>
-                        </p>
-                    </button>
-                </form>
-            <% } %>
+                            <p>
+                                <span><%= currentDay.max %><sup>o</sup></span> / 
+                                <span><%= currentDay.min %><sup>o</sup></span>
+                            </p>
+                        </button>
+                <% } %>
+            </form>
         </section>
     </section>
 
