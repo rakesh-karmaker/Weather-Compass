@@ -9,12 +9,12 @@
             <nav>
                 <!--------------- location search bar ------------------->
                 <form action="/location" method="post">
-                    <label for="city"><i class="fa-solid fa-location-dot"></i> <span>Search for cities</span></label>
-                    <input type="text" name="city" id="location">
+                    <input type="text" name="city" id="location" placeholder="Search for cities" autocomplete="off">
+                    <label for="city"><i class="fa-solid fa-location-dot"></i></label>
                 </form>
 
                 <form action="/" method="post" class="refresh">
-                    <button type="submit">refresh</button>
+                    <button type="submit"><i class="fa-solid fa-arrows-rotate"></i> <span>Refresh</span></button>
                 </form>
                 
                 <div class="color-switch">
@@ -31,7 +31,7 @@
                     <h1><%= data.temp %><sup>o</sup></h1>
                 </article>
                 
-                <img src="https://openweathermap.org/img/wn/<%= data.icon %>@2x.png" alt="Weather image">
+                <img src="assets/weather-icons/<%= data.icon %>.png" alt="Weather image">
             </header>
 
 
@@ -47,7 +47,7 @@
                             <button type="submit" name="hour" value="<%=i%>" class="hour">
                             <% } %>
                                 <p><%= currentHour.hour %></p>
-                                <img src="https://openweathermap.org/img/wn/<%= currentHour.icon %>@2x.png" alt="hourly-weather">
+                                <img src="assets/weather-icons/<%=currentHour.icon%>.png" alt="hourly-weather     <%=currentHour.icon%>">
                                 <p><%= currentHour.temp %><sup>o</sup></p>
                             </button>
                         </form>
@@ -72,7 +72,7 @@
                         <p><%= currentDay.day %></p>
                         
                         <div>
-                            <img src="https://openweathermap.org/img/wn/<%= currentDay.icon %>@2x.png" alt="day-weather-icon">
+                            <img src="assets/weather-icons/<%= currentDay.icon %>.png" alt="day-weather-icon">
                             <p><%= currentDay.des %></p>
                         </div>
 

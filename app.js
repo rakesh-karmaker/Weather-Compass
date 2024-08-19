@@ -218,6 +218,7 @@ app.get("/", function (req, res) {
             dailyDataList: req.session.dailyData,
             activeDay: req.session.dailyDataIndex,
         };
+        console.log("data has not been taken");
 
         res.render("weather-app", renderedData);
     }
