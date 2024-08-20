@@ -27,7 +27,8 @@ img {
 
 :root {
     --page-background : #0B121E;
-    --component-background : #202B3C;
+    --component-background : #202b3c62;
+    --blur-com : 5px;
     --primary-color : rgba(255, 255, 255, 0.79);
     --secondary-color : rgba(255, 255, 255, 0.61);
     --low-text-color : rgba(217, 217, 217, 0.46);
@@ -43,15 +44,51 @@ body {
     justify-content: center;
     align-items: center;
     padding: 40px;
+    position: relative;
 }
+
+
+
 
 
 main {
     width: 100%;
-    max-width: 1800px;
+    /* max-width: 1800px; */
     display: flex;
     flex-direction: column;
     gap: 50px;
+    position: relative;
+
+}
+
+
+
+
+.container {
+    width: 100%;
+    min-height: 100svh;
+    overflow: hidden;
+    height: 100%;
+    /* background-color: red; */
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    display: grid;
+    grid-template-columns: repeat(40, 1fr);
+    grid-template-rows: repeat(40, 1fr);
+}
+.container::after {
+    content: "";
+    position: absolute;
+    inset: 0px;
+    pointer-events: none;
+    z-index: 3;
+    background: radial-gradient(circle, transparent 5%, rgba(0, 0, 0, 0.815));
+}
+.box {
+    border: 1px solid rgba(255, 255, 255, 0.164);
+    aspect-ratio: 1 / 1;
 }
 
 
@@ -99,6 +136,7 @@ nav form input {
     width: 100%;
     height: 45px;
     background-color: var(--component-background);
+    backdrop-filter: blur(var(--blur-com));
     color: var(--secondary-color);
     border-radius: 14px;
     border: none;
@@ -130,6 +168,7 @@ nav input:focus {
     height: 45px;
     border-radius: 14px;
     background-color: var(--component-background);
+    backdrop-filter: blur(var(--blur-com));
     color: var(--secondary-color);
     border: none;
     cursor: pointer;
@@ -201,6 +240,7 @@ header img {
 /* ----------------- hourly-weather part starts here ----------------- */
 .hourly-weather {
     background-color: var(--component-background);
+    backdrop-filter: blur(var(--blur-com));
     max-width: calc(100vw - 630px);
     overflow-x: hidden;
     display: flex;
@@ -314,6 +354,7 @@ header img {
     gap: 40px;
     padding: 20px;
     background-color: var(--component-background);
+    backdrop-filter: blur(var(--blur-com));
     border-radius: 14px;
 }
 
@@ -419,6 +460,7 @@ header img {
     justify-content: center;
     gap: 30px;
     background-color: var(--component-background);
+    backdrop-filter: blur(var(--blur-com));
     border-radius: 14px;
     padding: 50px;
 }
@@ -481,6 +523,7 @@ header img {
     align-items: center;
     gap: 30px;
     background-color: var(--component-background);
+    backdrop-filter: blur(var(--blur-com));
     border-radius: 14px;
     padding: 50px;
 }
