@@ -137,7 +137,7 @@ function distributeCurrentData(data, sessionData) {
         wind_speed: Math.round(Number((data.wind.speed * 18) / 5)) + " km/h",
         visibility: Number((data.visibility) / 1000) + " km",
         pressure: data.main.pressure + " hPa",
-        feelsLike: data.main.feels_like
+        feelsLike: Math.round(Number(data.main.feels_like))
     };
 }
 

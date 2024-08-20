@@ -43,7 +43,6 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 40px;
     position: relative;
 }
 
@@ -58,6 +57,7 @@ main {
     flex-direction: column;
     gap: 50px;
     position: relative;
+    padding: 40px;
 
 }
 
@@ -218,6 +218,7 @@ header article h2 {
     font-size: 48px;
     font-weight: 700;
     letter-spacing: 2px;
+    text-shadow: 0px 4px 24px rgba(0, 38, 255, 0.226);
 }
 
 header article p {
@@ -228,11 +229,13 @@ header article p {
 header article h1 {
     font-size: 50px;
     color: var(--primary-color);
+    text-shadow: 0px 4px 24px rgba(0, 38, 255, 0.226);
 }
 
 header img {
     width: 200px;
     height: 200px;
+    filter: drop-shadow(0px 8px 24px rgba(18, 28, 53, 0.1));
 }
 
 
