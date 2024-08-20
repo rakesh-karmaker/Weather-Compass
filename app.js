@@ -198,7 +198,9 @@ app.get("/", function (req, res) {
                                     activeHour: Number(req.session.hourlyDataListIndex),
                                     dailyDataList: req.session.dailyData,
                                     activeDay: req.session.dailyDataIndex,
+                                    subscribed : (req.session.hasSubscribed) ? true : false
                                 };
+                                // console.log(req.session.hasSubscribed);
 
                                 res.render("weather-app", renderedData);
                                 console.log("data has been taken");
@@ -219,18 +221,21 @@ app.get("/", function (req, res) {
             activeHour: Number(req.session.hourlyDataListIndex),
             dailyDataList: req.session.dailyData,
             activeDay: req.session.dailyDataIndex,
+            subscribed : (req.session.hasSubscribed) ? true : false
         };
+        // console.log(req.session.hasSubscribed);
 
         res.render("weather-app", renderedData);
     }
 });
+
 
 //-------- handle POST requests
 app.post("/newsletter", function (req, res) {
     const url = "https://us9.api.mailchimp.com/3.0/lists/3126c4f861";
     const options = {
         method: "POST",
-        auth: "Rakesh:20caf57b8eff186478e57df656f0e46c-us9"
+        auth: `Rakesh:${process.env.MAILCHIMP_API_KEY}`,
     }
     req.session.email = req.body.email;
     req.session.data = {
@@ -246,11 +251,16 @@ app.post("/newsletter", function (req, res) {
     req.session.request = https.request(url, options, function(response) {
         if (response.statusCode === 200) {
             console.log("Successfully subscribed to the mailchimp list");
+            console.log(req.session.hasSubscribed);
         } else {
             console.log("Failed to subscribe to the mailchimp list");
         }
+        // response.on("data", function(data) {
+        //     // console.log(JSON.parse(data));
+        // })
     })
-
+    
+    req.session.hasSubscribed = true;
     req.session.request.write(req.session.jsonData);
     req.session.request.end();
 

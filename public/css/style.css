@@ -553,6 +553,13 @@ header img {
     opacity: 0.9;
 }
 
+.sub {
+    color: var(--secondary-color);
+    font-weight: 500;
+    font-size: 18px;
+    letter-spacing: 1px;
+}
+
 .socials {
     width: 45px;
     padding: 20px 0px;

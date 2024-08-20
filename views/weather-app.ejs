@@ -132,10 +132,14 @@
                     <p>
                         Weather Compass is our official newsletter. SUBSCRIBE NOW for get the latest news on your weather right inside your email as soon as possible.
                     </p>
-                    <form action="/newsletter" method="post">
-                        <input type="email" name="email" placeholder="Your email">
-                        <button type="submit">Subscribe</button>
-                    </form>
+                    <% if (!subscribed) { %>
+                        <form action="/newsletter" method="post">
+                            <input type="email" name="email" placeholder="Your email">
+                            <button type="submit">Subscribe</button>
+                        </form>
+                    <% } else { %>
+                        <p class="sub">Thank you for subscribing</p>
+                    <% } %>
                 </article>
                 <div class="socials">
                     <a href="https://www.facebook.com/rakesh.karmaker.980" class="facebook" target="_blank"><i class="fa-brands fa-facebook"></i></a>
