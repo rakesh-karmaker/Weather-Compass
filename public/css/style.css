@@ -75,6 +75,7 @@ main {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 
 
@@ -200,7 +201,8 @@ header img {
 /* ----------------- hourly-weather part starts here ----------------- */
 .hourly-weather {
     background-color: var(--component-background);
-    max-width:69vw;
+    max-width: calc(100vw - 630px);
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -210,6 +212,7 @@ header img {
     justify-self: flex-end;
     align-self: flex-start;
     padding: 20px;
+    position: relative;
 }
 
 .hourly-weather h2 {
@@ -303,9 +306,7 @@ header img {
 
 /* ------------------------ top right part starts here ------------------------ */
 .right {
-    width: 100%;
     width: 500px;
-    max-width: 450px;
     min-height: 625px;
     display: flex;
     flex-direction: column;
@@ -604,18 +605,6 @@ header img {
 }
 
 @media screen and (max-width: 1400px) {
-    .top {
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-    .hourly-weather {
-        max-width: 90vw;
-    }
-    .right {
-        max-width: 100%;
-        width: 80%;
-    }
     body {
         padding: 18px
     }
@@ -636,10 +625,32 @@ header img {
 }
 
 
-@media screen and (max-width: 800px) {
-    .right {
-        width: 90vw;
+@media screen and (max-width: 1100px) {
+    .top {
+        gap : 20px;
     }
+    .right {
+        width: 360px;
+    }
+    .hourly-weather {
+        max-width: calc(100vw - 426px);
+    }
+}
+
+@media screen and (max-width: 850px) {
+    .top {
+        flex-direction: column;
+    }
+    .right {
+        width: 100%;
+    }
+    .hourly-weather {
+        max-width: calc(100svw - 36px);
+    }
+}
+
+
+@media screen and (max-width: 800px) {
     .heading {
         font-size: 17px;
     }
@@ -649,8 +660,26 @@ header img {
 }
 
 @media screen and (max-width: 670px) {
+
     .details article {
-        flex-wrap: wrap;
+        flex-direction: column;
+    }
+    .details article > div {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+    }
+    .details article > div p {
+        text-align: center;
+        width: 150px;
+        padding: 0;
+        margin: 4px 0px;
+    }
+    .value {
+        padding: 0;
+        font-size: 30px;
     }
     .details article > div::after {
         display: none;
@@ -668,6 +697,9 @@ header img {
 
 
 @media screen and (max-width: 550px) {
+    .details {
+        padding: 20px 7px;
+    }
     header img {
         width: 150px;
         height: 150px;
@@ -678,8 +710,44 @@ header img {
     .newsletter {
         text-align: center;
     }
+    .details {
+        text-align: center;
+    }
+    .hourly-weather {
+        text-align: center;
+    }
+    .right h2 {
+        text-align: center;
+    }
     .upper-part form {
         flex-direction: column;
     }
     
+}
+@media screen and (max-width: 450px) {
+    .day img {
+        width: 50px;
+        height: 50px;
+    }
+    .day p {
+        font-size: 16px;
+    }
+    
+}
+
+@media screen and (max-width: 390px) {
+    header {
+        flex-direction: column-reverse;
+        padding: 30px 0px;
+        text-align: center;
+    }
+    header article p {
+        margin-bottom: 20px;
+    }
+    .details article {
+        gap: 20px;
+    }
+    .details article > div {
+        flex-direction: column;
+    }
 }

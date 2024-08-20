@@ -91,7 +91,7 @@ function distributeData(data, sessionData) {
             icon: weatherDataSet.weather[0].icon,
             hour: tConvert(weatherDataSet.dt_txt.slice(11, 16)),
             temp: Math.floor(Number(weatherDataSet.main.temp)),
-            feelsLike: Number(weatherDataSet.main.feels_like),
+            feelsLike: Math.round(Number(weatherDataSet.main.feels_like)),
             humidity: weatherDataSet.main.humidity + "%",
             clouds: weatherDataSet.clouds.all + "%",
             wind_speed: Math.round(Number((weatherDataSet.wind.speed * 18) / 5)) + " km/h",
