@@ -84,10 +84,11 @@ main {
     inset: 0px;
     pointer-events: none;
     z-index: 3;
-    background: radial-gradient(circle, transparent 5%, rgba(0, 0, 0, 0.815));
+    /* background: radial-gradient(circle, transparent 5%, rgba(0, 0, 0, 0.815)); */
+    background: radial-gradient(circle, transparent 5%, (var(--page-background) 10%));
 }
 .box {
-    border: 1px solid rgba(255, 255, 255, 0.164);
+    border: 1px solid rgba(255, 255, 255, 0.013);
     aspect-ratio: 1 / 1;
 }
 
@@ -408,7 +409,9 @@ header img {
     color: var(--secondary-color);
     font-size: 18px;
     font-weight: 500;
+    width: 80px;
 }
+
 
 .day p:has(span) {
     color: var(--low-text-color);
@@ -419,9 +422,10 @@ header img {
 
 .day div {
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
     gap: 15px;
+    /* width: 150px; */
 }
 
 .day img {
@@ -651,7 +655,7 @@ header img {
 }
 
 @media screen and (max-width: 1400px) {
-    body {
+    main {
         padding: 18px
     }
     .bottom {
