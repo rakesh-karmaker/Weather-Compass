@@ -85,7 +85,7 @@ main {
     pointer-events: none;
     z-index: 3;
     /* background: radial-gradient(circle, transparent 5%, rgba(0, 0, 0, 0.815)); */
-    background: radial-gradient(circle, transparent 5%, (var(--page-background) 10%));
+    background: radial-gradient (circle, transparent 5%, (var(--page-background) 10%));
 }
 .box {
     border: 1px solid rgba(255, 255, 255, 0.013);
